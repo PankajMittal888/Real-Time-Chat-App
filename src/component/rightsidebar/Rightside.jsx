@@ -13,8 +13,8 @@ const Rightside = () => {
         <div className="rs-profile">
         <img src={assests.avatar_icon} alt="" />
         <h3>{chatuser.UserData.name}
-          <img src={assests.green_dot} alt="" className="dot" />
-
+         {Date.now()-chatuser.UserData.lastSeen <=7000?
+          <img src={assests.green_dot} alt="" className="dot" />:""} 
 
 
         </h3>
