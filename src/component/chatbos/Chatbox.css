@@ -124,3 +124,18 @@
     font-weight: 500;
     font-size: 20px;
 }
+.chatuser .arrow{
+    display: none;
+}
+@media (max-width:900px){
+    .chatbox{
+        width: 100%;
+        justify-content: center;
+    }
+    .chatuser .arrow{
+        display: block;
+    }
+    .chatuser .help{
+        display: none;
+    }
+}

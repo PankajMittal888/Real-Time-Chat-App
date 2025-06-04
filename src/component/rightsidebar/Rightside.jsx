@@ -1,44 +1,49 @@
-import React, { useContext } from 'react';
-import './Rightside.css';
-import assests from "../../assets/assets"
-import { logout } from '../../config/Firebase';
-import { Appcontext } from '../../context/AppContext';
+
+
+import React, { useContext } from "react";
+import "./Rightside.css";
+// import assests from "../../assets/assets";
+import assets from "../../assets/assets";
+import { logout } from "../../config/Firebase";
+import { Appcontext } from "../../context/AppContext";
 
 const Rightside = () => {
+  const { chatuser, messages } = useContext(Appcontext);
+  return chatuser ? (
+    <div className="rs">
+      <div className="rs-profile">
+        <img src={assets.avatar_icon} alt="" />
+        <h3>
+          {chatuser?.userData?.name ||
+            chatuser?.UserData?.name ||
+            "No name found"}
 
-  const {chatuser,messages} =useContext(Appcontext);
-  return chatuser? (
-
-    <div className='rs'>
-        <div className="rs-profile">
-        <img src={assests.avatar_icon} alt="" />
-        <h3>{chatuser.UserData.name}
-         {Date.now()-chatuser.UserData.lastSeen <=7000?
-          <img src={assests.green_dot} alt="" className="dot" />:""} 
-
-
+          {Date.now() -
+            (chatuser?.userData?.lastseen ||
+              chatuser?.UserData?.lastseen ||
+              0) <=
+          300000 ? (
+            <img src={assets.green_dot} alt="" className="dot" />
+          ) : (
+            null
+          )}
+       { console.log(
+            chatuser?.userData?.lastSeen || chatuser?.UserData?.lastSeen || 0 )}
         </h3>
-        <p>{chatuser.UserData.bio}</p>
-   </div>
-    <hr />
-        <div className="rs-media">
-          {/* <p>media</p>
-          <div>
-            <img src={assests.pic1} alt="" />
-            <img src={assests.pic2} alt="" />
-            <img src={assests.pic3} alt="" />
-            <img src={assests.pic4} alt="" />
-            <img src={assests.pic1} alt="" />
-            <img src={assests.pic2} alt="" />
-          </div> */}
-        </div>
-     
-        <button onClick={logout}>Logout</button>
+        <p>
+          {chatuser?.userData?.bio ||
+            chatuser?.UserData?.bio ||
+            "user is available"}
+        </p>
+      </div>
+      <hr />
+      <button onClick={logout}>Logout</button>
     </div>
-  ):
-  <div className='rs'>
-    <button onClick={logout}>Logout</button>
-  </div>
-}
+  ) : (
+    <div className="rs">
+      <button onClick={logout}>Logout</button>
+    </div>
+  );
+};
 
-export default Rightside
+export default Rightside;

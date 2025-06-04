@@ -22,3 +22,15 @@
     color: white;
     opacity: 0.9;
 }
+/* .hidden{
+    display: none;
+} */
+
+@media (max-width:900px) {
+.chat-container{
+    display: flex;
+}
+.load{
+    font-size: 30px;
+}
+}

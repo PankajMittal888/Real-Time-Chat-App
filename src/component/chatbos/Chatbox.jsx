@@ -1,6 +1,8 @@
+
 import React, { useContext, useEffect, useState } from "react";
 import "./Chatbox.css";
-import assests from "../../assets/assets";
+
+import assets from "../../assets/assets";
 import { Appcontext } from "../../context/AppContext";
 import {
   arrayUnion,
@@ -13,8 +15,16 @@ import { db } from "../../config/Firebase";
 import { toast } from "react-toastify";
 
 const Chatbox = () => {
-  const { userData, messagesId, chatuser, messages, setMessages } =
-    useContext(Appcontext);
+  const {
+    userData,
+    messagesId,
+    chatuser,
+    messages,
+    setMessages,
+    chatvisiual,
+    setChatvisiual,
+  } = useContext(Appcontext);
+
   const [input, setInput] = useState("");
 
   const sendMsg = async () => {
@@ -65,41 +75,61 @@ const Chatbox = () => {
     }
   }, [messagesId]);
 
-  const Timeconvert=(timestamp)=>{
-    const date=timestamp.toDate();
-    let hours=date.getHours();
-    let minute=date.getMinutes();
-    if(hours>12){
-      return hours-12+":"+minute+"PM"
-    }else{
-       return hours+":"+minute+"AM"
+  const Timeconvert = (timestamp) => {
+    const date = timestamp.toDate();
+    let hours = date.getHours();
+    let minute = date.getMinutes();
+    if (hours > 12) {
+      return hours - 12 + ":" + minute + "PM";
+    } else {
+      return hours + ":" + minute + "AM";
     }
-
-  }
+  };
 
   return chatuser ? (
-    <div className="chatbox">
+    <div className={`chatbox ${chatvisiual ? "" : "hidden"}`}>
       <div className="chatuser">
-        <img src={assests.avatar_icon} alt="" className="first" />
+        <img src={assets.avatar_icon} alt="" className="first" />
         <p>
-          {chatuser.UserData.name}{" "}
-        {Date.now()-chatuser.UserData.lastSeen <=7000?
-          <img src={assests.green_dot} alt="" className="dot" />:""} 
+      
+          <p>
+            {chatuser?.userData?.name ||
+              chatuser?.UserData?.name ||
+              "No name found"}
+          </p>
+
+          {Date.now() -
+            (chatuser?.userData?.lastseen||
+              chatuser?.UserData?.lastseen||
+              0) <=
+          300000 ? (
+            <img src={assets.green_dot} alt="" className="dot" />
+          ) : (
+            null
+          )}
         </p>
-        <img src={assests.help_icon} alt="" />
+        <img src={assets.help_icon} alt="" className="help" />
+        <img
+          onClick={() => setChatvisiual(false)}
+          src={assets.arrow_icon}
+          alt=""
+          className="arrow"
+        />
       </div>
 
       <div className="chat-msg">
-        {messages.map((msg,index)=>(
-        <div key={index} className={msg.sId==userData.id?"s-msg":"r-msg"}>
-          <p className="msg">{msg.text}</p>
-          <div>
-            <img src={assests.avatar_icon} alt="" />
-            <p>{Timeconvert(msg.createdAt)}</p>
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={msg.sId == userData.id ? "s-msg" : "r-msg"}
+          >
+            <p className="msg">{msg.text}</p>
+            <div>
+              <img src={assets.avatar_icon} alt="" />
+              <p>{Timeconvert(msg.createdAt)}</p>
+            </div>
           </div>
-        </div>
         ))}
-        
       </div>
 
       <div className="chat-input">
@@ -116,14 +146,14 @@ const Chatbox = () => {
           hidden
         />
         <label htmlFor="image">
-          <img src={assests.gallery_icon} alt="" />
+          <img src={assets.gallery_icon} alt="" />
         </label>
-        <img onClick={sendMsg} src={assests.send_button} alt="" />
+        <img onClick={sendMsg} src={assets.send_button} alt="" />
       </div>
     </div>
   ) : (
-    <div className="chat-welcome">
-      <img src={assests.logo_icon} alt="" />
+    <div className={`chat-welcome ${chatvisiual ? "" : "hidden"}`}>
+      <img src={assets.logo_icon} alt="" />
       <p>chat anytime,anywhere</p>
     </div>
   );

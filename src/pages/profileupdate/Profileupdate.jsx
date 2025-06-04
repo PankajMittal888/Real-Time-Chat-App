@@ -6,7 +6,6 @@ import { auth, db } from '../../config/Firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import update from '../../lib/upload';
 import { Appcontext } from '../../context/AppContext';
 
 const Profileupdate = () => {
@@ -21,24 +20,7 @@ const Profileupdate = () => {
       const profileupdate=async(event)=>{
           event.preventDefault();
           try {
-            if(!prevImage && !image){
-              toast.error("upload profile picture");
-            }
             const docRef=doc(db,"users",uid);
-            // if(image){
-            //     const imageurl=await update(image);
-            //     setPrevImage(imageurl);
-            //     await updateDoc(docRef,{
-            //       avatar:imageurl,
-            //       name:name,
-            //       bio:Bio
-            //     })
-            // }else{
-            // await updateDoc(docRef,{
-            //       name:name,
-            //       bio:Bio
-            //     })
-            // }
             await updateDoc(docRef,{
                   name:name,
                   bio:Bio,

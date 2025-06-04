@@ -116,3 +116,9 @@
     color: #07fff3;
     font-weight: 500;
 }
+
+@media (max-width:900px) {
+    .ls{
+        width: 100%;
+    }
+}

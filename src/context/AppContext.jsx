@@ -12,9 +12,9 @@ const AppcontextProvider = (props) => {
   const [messagesId, setMessagesId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [chatuser, setChatuser] = useState(null);
+  const [chatvisiual,setChatvisiual]=useState(false);
 
   const loaduser = async (uid) => {
-    console.log("loaduser called with UID:", uid);
     try {
       const userRef = doc(db, "users", uid);
       const usersnap = await getDoc(userRef);
@@ -25,18 +25,16 @@ const AppcontextProvider = (props) => {
       } else {
         navigate("/profileupdate");
       }
-      await updateDoc(userRef, {
+    await updateDoc(userRef, {
         lastseen: Date.now(),
       });
 
-      setInterval(async () => {
-        if (auth.currentUser) {
-          console.log("Updating lastseen...");
-          await updateDoc(userRef, {
-            lastseen: Date.now(),
-          });
-        }
-      }, 60000);
+    setInterval(async () => {
+  if (auth.currentUser) {
+    await updateDoc(userRef, { lastSeen: Date.now() });
+    console.log("Periodic lastSeen update:", Date.now()); 
+  }
+}, 30000);
     } catch (error) {
       console.error(error);
     }
@@ -63,13 +61,37 @@ const AppcontextProvider = (props) => {
     }
   }, [userData]);
 
+useEffect(() => {
+  if (chatuser?.rId) {
+    const userRef = doc(db, "users", chatuser.rId);
+    const unsub = onSnapshot(userRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data.lastSeen && data.lastSeen > (chatuser?.userData?.lastSeen || 0)) {
+          setChatuser((prev) => ({
+            ...prev,
+            userData: { ...prev.userData, lastSeen: data.lastSeen },
+          }));
+          console.log("chatuser lastSeen updated:", data.lastSeen);
+        } else {
+          console.log("Skipped old lastSeen:", data.lastSeen);
+        }
+      }
+    }, (error) => {
+      console.error("onSnapshot error:", error);
+    });
+    return () => unsub();
+  }
+}, [chatuser?.rId]);
+  
+
   const Value = {
     userData,
     setUserData,
     chatData,
     setChatData,
     loaduser,
-    messages,messagesId,chatuser,setChatuser,setMessages,setMessagesId
+    messages,messagesId,chatuser,setChatuser,setMessages,setMessagesId,chatvisiual,setChatvisiual
   };
   return (
     <Appcontext.Provider value={Value}>{props.children}</Appcontext.Provider>

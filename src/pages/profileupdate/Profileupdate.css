@@ -57,3 +57,13 @@
     cursor: pointer;
     font-size: 16px;
 }
+
+@media (max-width:900px) {
+    .profile-container{
+        flex-direction: column;
+        width: 100%;
+        min-width: 350px;
+        gap: 30px;
+
+    }
+}

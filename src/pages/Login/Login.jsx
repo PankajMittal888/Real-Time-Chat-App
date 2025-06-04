@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import assets from '../../assets/assets';
-import { signup,login} from '../../config/Firebase';
+import { signup,login,resetPass} from '../../config/Firebase';
 const Login = () => {
   const [currentState,setCurrentState]=useState("Sign up");;
   const [name,setName]=useState("");
@@ -42,6 +42,10 @@ const Login = () => {
             </p>: <p className="login-toggle">
               create a Account <span onClick={()=>setCurrentState("Sign up")}>Click here</span>
             </p>}
+
+            {currentState=="login"?<p className="login-toggle">
+              forgot password <span onClick={()=>resetPass(email)}>reset here</span>
+            </p>:null}
           </div>
       </form>
     </div>

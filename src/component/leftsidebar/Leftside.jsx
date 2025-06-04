@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+
+import React, { useContext, useState,useEffect } from "react";
 import "./Leftside.css";
 import assets from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
@@ -14,15 +15,26 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { logout } from "../../config/Firebase";
 import { db } from "../../config/Firebase";
 import { Appcontext } from "../../context/AppContext";
 import { toast } from "react-toastify";
+
 const Leftside = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
 
-  const { userData, chatData,messagesId,chatuser,setChatuser,setMessagesId} = useContext(Appcontext);
+  const {
+    userData,
+    chatData,
+    messagesId,
+    chatuser,
+    setChatuser,
+    setMessagesId,
+    chatvisiual,
+    setChatvisiual,
+  } = useContext(Appcontext);
   const inputHanderler = async (e) => {
     try {
       let input = e.target.value;
@@ -48,6 +60,7 @@ const Leftside = () => {
       } else {
         setShowSearch(false);
       }
+      // input('');
     } catch (error) {}
   };
 
@@ -80,6 +93,23 @@ const Leftside = () => {
           lastSeen: true,
         }),
       });
+
+
+      const uSnap = await getDoc(doc(db, "users", user.id));
+      const uData = uSnap.data();
+      setChat({
+        maessageId: newMassageRef.id,
+        lastMessage: "",
+        rId: user.id,
+        updateAt: Date.now(),
+        lastSeen: true,
+        userData: uData,
+      });
+      setShowSearch(false);
+      setChatvisiual(true);
+
+
+
     } catch (error) {
       console.error(error);
       toast.error(error.code);
@@ -90,26 +120,39 @@ const Leftside = () => {
     setMessagesId(item.maessageId);
     setChatuser(item);
 
-   const uresChatref = doc(db, "chats", userData.id);
-const chatsnapshot = await getDoc(uresChatref); // ✅ use getDoc for document
-let userchatdata = chatsnapshot.data();
+    const uresChatref = doc(db, "chats", userData.id);
+    const chatsnapshot = await getDoc(uresChatref);
+    let userchatdata = chatsnapshot.data();
 
-const chatindex = userchatdata.chatData.findIndex(
-  (c) => c.maessageId === item.maessageId // ✅ correct arrow function and field name
-);
+    const chatindex = userchatdata.chatData.findIndex(
+      (c) => c.maessageId === item.maessageId
+    );
 
-if (chatindex !== -1) {
-  userchatdata.chatData[chatindex].lastSeen = true;
+    if (chatindex !== -1) {
+      userchatdata.chatData[chatindex].lastSeen = true;
 
-  await updateDoc(uresChatref, {
-    chatData: userchatdata.chatData,
-  });
-}
-
+      await updateDoc(uresChatref, {
+        chatData: userchatdata.chatData,
+      });
+    }
+    setChatvisiual(true);
   };
 
+    useEffect(() => {
+    const updatechatuserData = async () => {
+      if (chatuser) {
+        const userRef = doc(db, "users", chatuser.UserData.id);
+        const usersnap = await getDoc(userRef);
+        const userData = usersnap.data();
+        setChatuser((prev) => ({ ...prev, UserData: userData }));
+      }
+    };
+    updatechatuserData();
+  }, [chatData]);
+
+
   return (
-    <div className="ls">
+    <div className={`ls ${chatvisiual ? "hidden" : ""}`}>
       <div className="ls-top">
         <div className="ls-nav">
           <img src={assets.logo} alt="" className="logo" />
@@ -118,7 +161,7 @@ if (chatindex !== -1) {
             <div className="sub-menu">
               <p onClick={() => navigate("/profileupdate")}>Edit-profile</p>
               <hr />
-              <p>Logout</p>
+              <p onClick={logout}>Logout</p>
             </div>
           </div>
         </div>
@@ -132,23 +175,34 @@ if (chatindex !== -1) {
           />
         </div>
       </div>
+
+
+
       <div className="ls-list">
         {showSearch && user ? (
           <div onClick={addChat} className="friends add-friend">
             <img src={assets.avatar_icon} alt="" />
             <p>{user.name}</p>
           </div>
-        ) : Array.isArray(chatData) && chatData.length > 0 ? (
-          chatData.map((item, index) => (
-            // const ChatUser = chatUsers[item.rId];
-            <div onClick={() => setChat(item)} key={index} className={`friends ${item.lastSeen || item.maessageId==messagesId?"":"border"}`}>
-              <img src={assets.profile_img} alt="profile" />
+        ) : Array.isArray(chatData) && chatData.length > 0 ?(
+          chatData.map((item, index) => {
+          //  console.log("chatData item:", item);
+          return(
+            <div
+              onClick={() => setChat(item)}
+              key={index}
+              className={`friends ${
+                item.lastSeen || item.maessageId == messagesId ? "" : "border"
+              }`}
+            >
+              <img src={assets.avatar_icon} alt="profile" />
               <div>
                 <p>{item.UserData.name}</p>
                 <span>{item.lastMessage}</span>
               </div>
             </div>
-          ))
+          )
+})
         ) : (
           <p className="err">No chats found</p>
         )}
@@ -158,3 +212,4 @@ if (chatindex !== -1) {
 };
 
 export default Leftside;
+

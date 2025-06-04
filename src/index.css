@@ -9,3 +9,8 @@
 ::-webkit-scrollbar{
   display: none;
 }
+@media (max-width:900px) {
+  .hidden{
+    display: none;
+}
+}
