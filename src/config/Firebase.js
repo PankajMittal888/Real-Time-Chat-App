@@ -1,23 +1,17 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, where } from "firebase/firestore";
-// import { Await } from "react-router-dom";
+import { collection, doc, getDocs, getFirestore, query, setDoc, where } from "firebase/firestore";
 import { toast } from "react-toastify";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDNsWZRBbbrpZ3XwYNRn-mi44j4C-Y4pUU",
-  authDomain: "chat-app-af7c5.firebaseapp.com",
-  projectId: "chat-app-af7c5",
-  storageBucket: "chat-app-af7c5.firebasestorage.app",
-  messagingSenderId: "59244727219",
-  appId: "1:59244727219:web:6341fdd4d0125b42e499c6"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -34,19 +28,17 @@ const signup = async (username, email, password) => {
       avatar: "",
       bio: "hey , i am using chat App",
       lastseen: Date.now()
-    })
-
-
+    });
 
     await setDoc(doc(db, "chats", user.uid), {
       chatData: []
-    })
+    });
 
   } catch (error) {
     console.error(error);
     toast.error(error.code.split("/")[1].split("-").join(" "));
   }
-}
+};
 
 const login = async (email, password) => {
   try {
@@ -55,7 +47,7 @@ const login = async (email, password) => {
     console.error(error);
     toast.error(error.code.split("/")[1].split("-").join(" "));
   }
-}
+};
 
 const logout = async () => {
   try {
@@ -64,11 +56,11 @@ const logout = async () => {
     console.error(error);
     toast.error(error.code.split("/")[1].split("-").join(" "));
   }
-}
+};
 
 const resetPass = async (email) => {
   if (!email) {
-    toast.error("enter your email")
+    toast.error("enter your email");
     return null;
   }
   try {
@@ -83,7 +75,8 @@ const resetPass = async (email) => {
     }
   } catch (error) {
     console.error(error);
-    toast.error(error.message)
+    toast.error(error.message);
   }
-}
-export { signup, login, logout, auth, db, resetPass }
+};
+
+export { signup, login, logout, auth, db, resetPass };

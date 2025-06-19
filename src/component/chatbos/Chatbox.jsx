@@ -1,7 +1,6 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import "./Chatbox.css";
-
 import assets from "../../assets/assets";
 import { Appcontext } from "../../context/AppContext";
 import {

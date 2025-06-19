@@ -32,7 +32,7 @@ const AppcontextProvider = (props) => {
     setInterval(async () => {
   if (auth.currentUser) {
     await updateDoc(userRef, { lastSeen: Date.now() });
-    console.log("Periodic lastSeen update:", Date.now()); 
+    // console.log("Periodic lastSeen update:", Date.now()); 
   }
 }, 30000);
     } catch (error) {
@@ -72,13 +72,13 @@ useEffect(() => {
             ...prev,
             userData: { ...prev.userData, lastSeen: data.lastSeen },
           }));
-          console.log("chatuser lastSeen updated:", data.lastSeen);
+          console.log(data.lastSeen);
         } else {
-          console.log("Skipped old lastSeen:", data.lastSeen);
+          console.log("old", data.lastSeen);
         }
       }
     }, (error) => {
-      console.error("onSnapshot error:", error);
+      console.error("error:", error);
     });
     return () => unsub();
   }

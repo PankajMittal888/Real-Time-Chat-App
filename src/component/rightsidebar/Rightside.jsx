@@ -27,8 +27,6 @@ const Rightside = () => {
           ) : (
             null
           )}
-       { console.log(
-            chatuser?.userData?.lastSeen || chatuser?.UserData?.lastSeen || 0 )}
         </h3>
         <p>
           {chatuser?.userData?.bio ||
